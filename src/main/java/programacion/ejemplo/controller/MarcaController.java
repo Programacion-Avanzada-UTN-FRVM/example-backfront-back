@@ -1,9 +1,12 @@
 package programacion.ejemplo.controller;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import programacion.ejemplo.DTO.MarcaDTO;
 import programacion.ejemplo.Mapper.MarcaMapper;
@@ -15,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value="${path_mapping}")
-@CrossOrigin(value="${path_cross}")
 
 public class MarcaController {
 
@@ -42,17 +44,23 @@ public class MarcaController {
     }
 
 
-    
-    @PostMapping("/marca")
-    public MarcaDTO guardar(@RequestBody MarcaDTO model){
 
-        return modelService.guardar(model);
+    @PostMapping("/marca")
+    public ResponseEntity<String>   agregarMarca(@Valid @RequestBody MarcaDTO marcaDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return modelService.guardar(marcaDTO);
     }
 
-    @PutMapping("/marca")
-    public MarcaDTO actualizar(@RequestBody MarcaDTO model){
 
-        return modelService.guardar(model);
+    @PutMapping("/marca")
+    public ResponseEntity<String> actualizar(@Valid @RequestBody MarcaDTO marcaDTO, BindingResult result){
+
+        if (result.hasErrors()) {
+            return new ResponseEntity<>(result.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return modelService.guardar(marcaDTO);
     }
 
     @DeleteMapping("/marca/{id}")
@@ -68,4 +76,13 @@ public class MarcaController {
         modelService.eliminar(model);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/marcaExiste")
+    public ResponseEntity<?> checkDenominacion(@RequestParam String denominacion) {
+        logger.info("ees1 ");
+        boolean exists = modelService.isDenominacionExiste(denominacion);
+        logger.info("ees "+ exists);
+        return ResponseEntity.ok().body("{\"exists\": " + exists + "}");
+    }
+
 }

@@ -1,5 +1,6 @@
 package programacion.ejemplo.service;
 
+import org.springframework.http.ResponseEntity;
 import programacion.ejemplo.DTO.MarcaDTO;
 import programacion.ejemplo.model.Marca;
 
@@ -11,9 +12,13 @@ public interface IMarcaService {
 
     public Marca buscarPorId(Integer id);
 
-    public MarcaDTO guardar(MarcaDTO model);
+    public ResponseEntity<String> guardar(MarcaDTO model);
 
     public Marca guardar(Marca model);
 
     public void eliminar(Marca model);
+
+    public boolean isDenominacionExiste(String denominacion);
+
+
 }
